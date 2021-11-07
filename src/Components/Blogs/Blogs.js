@@ -27,7 +27,7 @@ const Blogs = () => {
 
   function openModal(blog) {
     setSelectedBlog(blog);
-      setIsOpen(true);
+    setIsOpen(true);
   }
 
   function closeModal() {
