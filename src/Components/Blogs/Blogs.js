@@ -1,35 +1,29 @@
 import React, { useState, useEffect } from "react";
 import UpdateBlog from "../UpdateBlog/UpdateBlog";
+import axios from "axios";
 
-const Blogs = () => {
-  const [blogs, setBlogs] = useState([]);
+const Blogs = ({ blogs, fetchBlog }) => {
+  // const [blogs, setBlogs] = useState([]);
   const [selectedBlog, setSelectedBlog] = useState(null);
 
-  // display all blogs here
-  useEffect(() => {
-    fetch("https://care-box-backend.herokuapp.com/api/v1/applicant_test/")
-      .then((res) => res.json())
-      .then((data) => setBlogs(data));
-  }, []);
+  // //fetch all blog
+  // const fetchBlog = async () => {
+  //   const { data } = await axios.get("/api/v1/applicant_test/");
+  //   setBlogs(data);
+  //   console.log("fetchBlog", data);
+  // };
 
-  const updateBlog = (id) => {
-    fetch(
-      `https://care-box-backend.herokuapp.com/api/v1/applicant_test/update_blog/{id}/`,
-      {
-        method: "PUT",
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  };
+  // // display all blogs here
+  // useEffect(() => {
+  //   fetchBlog();
+  // }, []);
 
+  //modal here
   const [modalIsOpen, setIsOpen] = useState(false);
-
   function openModal(blog) {
     setSelectedBlog(blog);
     setIsOpen(true);
   }
-
   function closeModal() {
     setIsOpen(false);
   }
@@ -73,6 +67,7 @@ const Blogs = () => {
           modalIsOpen={modalIsOpen}
           blogs={selectedBlog}
           closeModal={closeModal}
+          fetchBlog={fetchBlog}
         ></UpdateBlog>
       </div>
     </div>

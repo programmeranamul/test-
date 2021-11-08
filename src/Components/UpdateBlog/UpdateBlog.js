@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 const customStyles = {
   content: {
@@ -14,19 +15,20 @@ const customStyles = {
 };
 Modal.setAppElement("#root");
 
-const UpdateBlog = ({ modalIsOpen, blogs, closeModal }) => {
+const UpdateBlog = ({ modalIsOpen, blogs, closeModal, fetchBlog }) => {
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (!blogs) {
       closeModal();
     }
   }, []);
-  console.log(blogs);
 
   const { register, handleSubmit, errors } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("data", data);
-    const URL = `https://care-box-backend.herokuapp.com/api/v1/applicant_test/update_blog/${blogs.id}`;
+  const onSubmit = async (data) => {
+    //const URL = `https://care-box-backend.herokuapp.com/api/v1/applicant_test/update_blog/${blogs.id}`;
+    const URL = `/api/v1/applicant_test/update_blog/${blogs.id}`;
     const blogData = {
       id: blogs.id,
       Title: data.Title,
@@ -35,18 +37,32 @@ const UpdateBlog = ({ modalIsOpen, blogs, closeModal }) => {
       Email: data.Email,
       Description: data.Description,
     };
-    fetch(URL, {
-      method: "PUT",
-      headers: {
-        "Custom-User-Agent": "gsdf#g3243F466$",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(blogData),
-    })
-      .then((res) => {
-          closeModal()
-        })
-      .catch((e) => console.log("update", e));
+    setLoading(true);
+    try {
+      const res = await axios.put(URL, blogData, {
+        headers: {
+          "Custom-User-Agent": "gsdf#g3243F466$",
+          "Content-Type": "application/json",
+        },
+      });
+      setLoading(false);
+      closeModal();
+      await fetchBlog();
+    } catch (e) {
+      setLoading(false);
+    }
+    // fetch(URL, {
+    //   method: "PUT",
+    //   headers: {
+    //     "Custom-User-Agent": "gsdf#g3243F466$",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(blogData),
+    // })
+    //   .then((res) => {
+    //     closeModal();
+    //   })
+    //   .catch((e) => console.log("update", e));
   };
 
   return (
@@ -140,8 +156,12 @@ const UpdateBlog = ({ modalIsOpen, blogs, closeModal }) => {
             )}
           </div>
           <div className="form-group d-grid mx-auto">
-            <button type="submit" className="btn btn-primary">
-              Submit
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading ? true : false}
+            >
+              {loading ? "Loading . . ." : "Submit"}
             </button>
           </div>
         </form>
